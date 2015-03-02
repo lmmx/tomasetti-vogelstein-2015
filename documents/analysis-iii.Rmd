@@ -1,0 +1,10 @@
+---
+title: ""
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r echo=FALSE, results='asis', comment=''}
+if (rmarkdown::metadata$title != '') cat("##", rmarkdown::metadata$title)
+```

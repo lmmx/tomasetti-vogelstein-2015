@@ -1,0 +1,19 @@
+---
+title: "Analysis of Tomasetti & Vogelstein (2015)"
+knit: (function(inputFile, encoding) { for (section in list.files(pattern="analysis-.*?.Rmd")) { rmarkdown::render(section, encoding = "UTF-8", quiet=TRUE) }; rmarkdown::render(input = inputFile, encoding = encoding, quiet=TRUE, output_file = paste0(dirname(inputFile),'/../README.md')); rmarkdown::render(input = paste0(dirname(inputFile),'/../README.md'), encoding = encoding, output_format="html_document", output_file = paste0(dirname(inputFile),'/Tomasetti and Vogelstein analysis post.html')) })
+output:
+  md_document:
+    variant: markdown_github
+    includes:
+      after_body: [
+        analysis-i.md,
+        analysis-ii.md,
+        analysis-iii.md
+      ]
+---
+
+```{r echo=FALSE, results='asis', comment=''}
+cat("#", rmarkdown::metadata$title)
+```
+
+To get an idea of the importance of what Tomasetti & Vogelstein (henceforth T&V) missed in their paper (and how important oversights may have been), I have compared the tissue types in recent CRUK cancer stats against those used in their paper, as the first of a few analyses. Source code (primarily within Rmarkdown documents), data *etc.* are available on GitHub [here](https://github.com/lmmx/tomasetti-vogelstein-2015).

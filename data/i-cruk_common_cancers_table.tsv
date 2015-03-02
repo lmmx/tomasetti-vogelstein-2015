@@ -1,0 +1,23 @@
+Cancer Site	Male	Female	Persons
+Breast (C50)	349	49,936	
+Lung (C33-C34)	23,770	19,693	43,463
+Prostate (C61)	41,736		
+Bowel (C18-C20)	23,171	18,410	41,581
+Malignant Melanoma (C43)	6,495	6,853	13,348
+Non-Hodgkin Lymphoma (C82-C85)	6,926	5,857	12,783
+Bladder (C67)	7,452	2,947	10,399
+Kidney (C64-C66,C68)	6,257	3,887	10,144
+Brain, Other CNS & Intracranial Tumours (C70-C72, C75.1-C75.3, D32-D33, D35.2-D35.4, D42-D43, D44.3-D44.5)	4,650	4,715	9,365
+Pancreas (C25)	4,328	4,445	8,773
+Leukaemia (C91-C95)	5,014	3,602	8,616
+Uterus (C54-C55)		8,475	
+Oesophagus (C15)	5,582	2,750	8,332
+Ovary (C56-C57)		7,116	
+Stomach (C16)	4,615	2,474	7,089
+Oral (C00-C06,C09-C10,C12-C14)	4,510	2,257	6,767
+Myeloma (C90)	2,660	2,132	4,792
+Liver (C22)	2,776	1,572	4,348
+Cervix (C53)		3,064	
+Thyroid (C73)	769	1,958	2,727
+Other Sites	18,942	16,310	35,252
+All Cancers Excluding NMSC (C00-C97 excluding C44)	167,487	164,000	331,487

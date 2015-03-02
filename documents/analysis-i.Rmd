@@ -1,0 +1,139 @@
+---
+title: "Prevalence of cancer types surveyed"
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r echo=FALSE, results='asis', comment=''}
+if (rmarkdown::metadata$title != '') cat("##", rmarkdown::metadata$title)
+```
+
+CRUK's prevalence statistics by cancer site are the most recent data put out (yes, T&V used U.S. figures but that seems irrelevant).
+
+> There are more than 200 different types of cancer, but four of them - breast, lung, prostate, and bowel - account for over half (53%) of all new cases in the UK (2011).
+> <small>[Cancer Research UK, *CancerStats: 'Cancer incidence for common cancers'*](http://www.cancerresearchuk.org/cancer-info/cancerstats/incidence/commoncancers/uk-cancer-incidence-statistics-for-common-cancers#Twenty)</small>
+
+> The scientists note that some cancers, such as breast and prostate cancer, were not included in the report because of their inability to find reliable stem cell division rates in the scientific literature. They hope that other scientists will help refine their statistical model by finding more precise stem cell division rates.
+> <small>[John Hopkins press release, '*Bad Luck of Random Mutations Plays Predominant Role in Cancer, Study Shows*'](http://www.hopkinsmedicine.org/news/media/releases/bad_luck_of_random_mutations_plays_predominant_role_in_cancer_study_shows)</small>
+
+
+```{r echo=FALSE, results='hide'}
+# source file: inc_20common_mf.xls
+# from http://www.cancerresearchuk.org/cancer-info/cancerstats/incidence/commoncancers/uk-cancer-incidence-statistics-for-common-cancers#Twenty
+# stored in data/cruk_common_cancers.xls
+# table region exported to tsv in data/i-cruk_common_cancers_table.tsv
+
+# Read the tsv in, discarding the [inconsistent] 'Persons' column, as well as
+# the 'all cancers' row (#22) that excludes non-myeloma skin cancer figures in 'Other sites'
+cruk.data.in <- read.csv("../data/i-cruk_common_cancers_table.tsv", sep = "\t")[1:21, c('Cancer.Site','Male','Female')]
+cruk.df <- data.frame(c(lapply(cruk.data.in['Cancer.Site'], function(cancer.site) {gsub("\\s\\(.*$", "", cancer.site)}),
+                      lapply(cruk.data.in[c('Male','Female')],
+                             function(text.number) {as.numeric(gsub(",","", text.number))})),
+                      stringsAsFactors = FALSE)
+# Appending a row for 'all cancers' doesn't make sense semantically...
+# cruk.df[nrow(cruk.df)+1,] <- c('All sites', sum(cruk.df$Male, na.rm = TRUE), sum(cruk.df$Female, na.rm = TRUE))
+
+# ...but remaking the removed 'Persons' column does
+temp.df <- data.frame(cruk.df, stringsAsFactors = FALSE)
+temp.df[is.na(temp.df)] <- 0
+cruk.df$Persons <- temp.df$Male + temp.df$Female
+remove('temp.df')
+
+# Instead, store these totals as attributes on the columns
+for (col in c('Male','Female','Persons')) {
+  attr(cruk.df[[col]], "All sites") <- sum(cruk.df[col], na.rm = TRUE)
+}
+cruk.cancers <- cruk.df$Cancer.Site
+
+# T&V's supplementary material table (PDF) as csv downloaded from Yaniv Erlich:
+# https://www.dropbox.com/s/fli8p7jwc7bdfym/Voglestein.csv?dl=0
+# ...saved in the data directory as table-s1.csv, cleaned up to tsv
+# then re-exported to make it display on Linux terminal (Mac Classic newlines)
+# ...and compared with Aaron Quinlan's version, both under data/processing-intermediates
+# https://gist.github.com/arq5x/d8923049fc6019e6afd0
+# ...final version named i-table-s1-cleaned.tsv
+s1 <- read.csv('../data/i-table-s1-cleaned.tsv', sep='\t', stringsAsFactors = FALSE)
+
+tv.cancers <- s1[,1]
+cruk.tv.table <- data.frame(cruk.cancers, stringsAsFactors = FALSE)
+cruk.tv.table$tv.cancers <- list(NA)
+
+assignment.list <- c(
+  "AML" = "Leukaemia",
+  "BCC" = "Other Sites", # skin cancer, not malignant melanoma
+  "CLL" = "Leukaemia",
+  "Colorectal" = "Bowel",
+  "Colorectal_FAP" = "Bowel",
+  "Colorectal_Lynch" = "Bowel",
+  "Duodenum_adenocarcinoma" = "Bowel",
+  "Duodenum_adenocarcinoma_with_FAP" = "Bowel",
+  "Esophageal_squamous_cell_carcinoma" = "Oesophagus",
+  "Gallbladder_non_papillary_adenocarcinoma" = "Bladder",
+  "Glioblastoma" = "Brain, Other CNS & Intracranial Tumours",
+  "Head_neck_squamous_cell_carcinoma" = "Other Sites",
+  "Head_neck_squamous_cell_carcinoma_with_HPV-16" = "Other Sites",
+  "Hepatocellular_carcinoma" = "Liver",
+  "Hepatocellular_carcinoma_with_HCV" = "Liver",
+  "Lung_adenocarcinoma_(nonsmokers)" = "Lung",
+  "Lung_adenocarcinoma_(smokers)" = "Lung",
+  "Medulloblastoma" = "Brain, Other CNS & Intracranial Tumours",
+  "Melanoma" = "Malignant Melanoma",
+  "Osteosarcoma" = "Other Sites",
+  "Osteosarcoma_of_arms" = "Other Sites",
+  "Osteosarcoma_of_head" = "Other Sites",
+  "Osteosarcoma_of_legs" = "Other Sites",
+  "Osteosarcoma_of_pelvis" = "Other Sites",
+  "Ovarian_germ_cell" = "Ovary",
+  "Pancreatic_ductal_adenocarcinoma" = "Pancreas",
+  "Pancreatic_endocrine" = "Pancreas",
+  "Small_intestine_adenocarcinoma" = "Bowel",
+  "Testicular_germ_cell_cancer" = "Other Sites",
+  "Thyroid_papillary/follicular_carcinoma" = "Thyroid",
+  "Thyroid_medullary_carcinoma" = "Thyroid"
+  )
+# row names are 'keys', list values merge vs. cruk.tv.table$tv.cancers
+assignment.df <- data.frame(assignment.list, stringsAsFactors = FALSE)
+# make these keys a column in their own right and discard row names after a sort
+assignment.df$tv.cancers <- rownames(assignment.df)
+assignment.df <- assignment.df[ order(assignment.df[,1], assignment.df[,1]), ]
+rownames(assignment.df) <- NULL
+# mapply could be used to recurse over the data frame and run assignTissue
+# temp.object <- mapply(function(a,b) {
+#   print(assignTissue(a,b))
+# }, assignment.df$assignment.list, assignment.df$tv.cancers)
+# but dplyr is far better
+
+library('dplyr', warn.conflicts = FALSE)
+
+# Aggregate cancers by the annotated type
+cruk.grouped <- assignment.df %>%
+    group_by(assignment.list) %>%
+    summarise(cancers = list(tv.cancers))
+
+assignTissue <- function(cruk.cancer.site, tv.cancer.type) {
+  table.target <- cruk.tv.table$tv.cancers[cruk.tv.table$cruk.cancers==cruk.cancer.site]
+  cruk.tv.table$tv.cancers[cruk.tv.table$cruk.cancers==cruk.cancer.site][[1]] <- tv.cancer.type
+  return(cruk.tv.table)
+}
+
+for (i in 1:nrow(cruk.grouped)) {
+    cruk.tv.table <- assignTissue(cruk.grouped[[1]][[i]], cruk.grouped[[2]][[i]])
+}
+
+# Lastly merge this table against the table from CRUK to see how prevalent the overlooked cancers are
+
+cruk.tv.crossref <- merge(cruk.df, cruk.tv.table, by.x = 'Cancer.Site', by.y = 'cruk.cancers')
+```
+
+```{r echo=FALSE, results='asis'}
+# Comma-separate the list and strip underscores from the tv.cancers column to write the table to markdown
+cruk.tv.crossref.kable <- cruk.tv.crossref
+cruk.tv.crossref.kable$tv.cancers <- lapply(cruk.tv.crossref.kable$tv.cancers,
+                                            function(row) {gsub('_',' ',paste(unlist(row), collapse=", ")) })
+
+cruk.tv.crossref.kable$tv.cancers <- unlist(cruk.tv.crossref.kable$tv.cancers)
+library('knitr')
+kable(cruk.tv.crossref.kable, format = "markdown", col.names = c("Cancer site","No. cases \u2642","No. cases \u2640","Total no. cases","Cancers included in Tomasetti & Vogelstein's 2015 paper"))
+```
+

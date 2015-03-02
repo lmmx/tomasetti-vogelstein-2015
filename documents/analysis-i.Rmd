@@ -133,7 +133,16 @@ cruk.tv.crossref.kable$tv.cancers <- lapply(cruk.tv.crossref.kable$tv.cancers,
                                             function(row) {gsub('_',' ',paste(unlist(row), collapse=", ")) })
 
 cruk.tv.crossref.kable$tv.cancers <- unlist(cruk.tv.crossref.kable$tv.cancers)
+cruk.tv.crossref.kable <- cruk.tv.crossref.kable[ order(cruk.tv.crossref.kable[,4], cruk.tv.crossref.kable[,1], decreasing = TRUE), ]
+rownames(cruk.tv.crossref.kable) <- NULL
 library('knitr')
 kable(cruk.tv.crossref.kable, format = "markdown", col.names = c("Cancer site","No. cases \u2642","No. cases \u2640","Total no. cases","Cancers included in Tomasetti & Vogelstein's 2015 paper"))
 ```
 
+A table shows the discrepancies, and though not really adding much, overlaying these onto a recreation of the bar chart CRUK provided [in 2011](http://www.cancerresearchuk.org/cancer-info/cancerstats/incidence/commoncancers/uk-cancer-incidence-statistics-for-common-cancers#Twenty) may also show the gaps well.
+
+```{r echo=FALSE, results='asis'}
+library(ggplot2, warn.conflicts = FALSE)
+library(reshape2, warn.conflicts = FALSE)
+# ggplot syntax is tricky, TBC
+```

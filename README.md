@@ -37,7 +37,3 @@ CRUK's prevalence statistics by cancer site are the most recent data put out (ye
 | Thyroid                                 |          769|         1958|             2727| Thyroid papillary/follicular carcinoma, Thyroid medullary carcinoma                                                                                                                                                        |
 
 A table shows the discrepancies, and though not really adding much, overlaying these onto a recreation of the bar chart CRUK provided [in 2011](http://www.cancerresearchuk.org/cancer-info/cancerstats/incidence/commoncancers/uk-cancer-incidence-statistics-for-common-cancers#Twenty) may also show the gaps well.
-
-
-
-
